@@ -7,22 +7,12 @@ from doc import Document
 from index import Indexer
 
 
+@click.group(invoke_without_command=True)
 def main():
-    pass
-
-
-@main.command()
-def create_index():
     docs = read_file_into_docs("doc_dump.txt")
     create_id_file_from_docs("ID.txt", docs)
     indexer = Indexer(docs)
     indexer.create()
-
-
-@click.group()
-def cli():
-    docs = read_file_into_docs("doc_dump.txt")
-    create_id_file_from_docs("ID.txt", docs)
 
 
 def read_file_into_docs(file):
@@ -48,7 +38,7 @@ def create_id_file_from_docs(file, docs: [Document]):
         f.close()
 
 
-@cli.command()
+@main.command()
 @click.argument('query', nargs=-1, type=click.UNPROCESSED)
 def search(query):
     click.echo(f"Suchanfrage: {query}")
@@ -56,4 +46,3 @@ def search(query):
 
 if __name__ == '__main__':
     main()
-    click()
