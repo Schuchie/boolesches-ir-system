@@ -5,14 +5,14 @@ class Document:
         self.title = title.lower()
         self.text = text.lower()
 
-    def getID(self):
+    def get_id(self):
         return self.id
 
-    def getURL(self):
+    def get_url(self):
         return self.url
 
-    def getTitle(self):
+    def get_title(self):
         return self.title
 
-    def getText(self):
+    def get_text(self):
         return self.text
