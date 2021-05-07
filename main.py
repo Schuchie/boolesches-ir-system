@@ -1,11 +1,18 @@
-from tokenize import tokenize, untokenize, NUMBER, STRING, NAME, OP
+import tokenize
+import itertools
 from io import BytesIO
+
+from doc import Document
 
 
 def main():
-    f = open("doc_dump.txt", mode="r", encoding="utf-8")
-    content = f.readlines()
-    print(len(content))
+    with open("doc_dump.txt", mode="r", encoding="utf-8") as f:
+        for l in f.readlines():
+            data = l.split("\t")
+            if len(data) == 4:
+                doc = Document(data[0], data[1], data[2], data[3])
+            else:
+                print("NoNoNo")
 
 
 if __name__ == '__main__':
