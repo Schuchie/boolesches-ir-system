@@ -1,8 +1,15 @@
 import tokenize
 import itertools
 from io import BytesIO
+import click
 
 from doc import Document
+
+
+@click.group()
+def main():
+    docs = read_file_into_docs("doc_dump.txt")
+    create_id_file_from_docs("ID.txt", docs)
 
 
 def read_file_into_docs(file):
@@ -28,9 +35,10 @@ def create_id_file_from_docs(file, docs):
         f.close()
 
 
-def main():
-    docs = read_file_into_docs("doc_dump.txt")
-    create_id_file_from_docs("ID.txt", docs)
+@main.command()
+@click.argument('query')
+def search(query):
+    click.echo(f"Suchanfrage: {query}")
 
 
 if __name__ == '__main__':
