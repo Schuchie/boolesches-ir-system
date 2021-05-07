@@ -1,6 +1,6 @@
 class Document:
     def __init__(self, id, url, title, text):
-        self.id = id
-        self.url = url
-        self.title = title
-        self.text = text
+        self.id = id.lower()
+        self.url = url.lower()
+        self.title = title.lower()
+        self.text = text.lower()
