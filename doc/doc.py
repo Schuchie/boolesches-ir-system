@@ -5,8 +5,8 @@ class Document:
     def __init__(self, id, url, title, text):
         self.id = id.lower()
         self.url = url.lower()
-        self.title = list(tokenizer.tokenize(title.lower()))
-        self.text = list(tokenizer.tokenize(text.lower()))
+        self.title = tokenizer.tokenize(title.lower())
+        self.text = tokenizer.tokenize(text.lower())
 
     def get_id(self):
         return self.id

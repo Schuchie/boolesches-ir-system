@@ -11,7 +11,7 @@ from index import Indexer
 @shell(prompt='wpp> ')
 def main():
     docs = read_file_into_docs("doc_dump.txt")
-    create_id_file_from_docs("ID.txt", docs)
+    #create_id_file_from_docs("ID.txt", docs)
     indexer = Indexer(docs)
     indexer.create()
 
@@ -35,7 +35,7 @@ def create_id_file_from_docs(file, docs: [Document]):
         for doc in docs:
             f.write(doc.get_id())
             f.write("\t")
-            f.write(doc.get_title()[1])
+            f.write(doc.get_title()[0].txt)
             f.write("\n")
         f.close()
 
