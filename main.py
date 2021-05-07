@@ -28,9 +28,9 @@ def read_file_into_docs(file):
 def create_id_file_from_docs(file, docs: [Document]):
     with open(file, mode="w", encoding="utf-8") as f:
         for doc in docs:
-            f.write(doc.getID())
+            f.write(doc.get_id())
             f.write("\t")
-            f.write(doc.getTitle())
+            f.write(doc.get_title())
             f.write("\n")
         f.close()
 
