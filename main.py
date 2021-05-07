@@ -36,7 +36,7 @@ def create_id_file_from_docs(file, docs: [Document]):
 
 
 @main.command()
-@click.argument('query')
+@click.argument('query', nargs=-1, type=click.UNPROCESSED)
 def search(query):
     click.echo(f"Suchanfrage: {query}")
 
