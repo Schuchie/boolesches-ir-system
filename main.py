@@ -1,13 +1,14 @@
 import tokenize
 import itertools
 from io import BytesIO
+from click_shell import shell
 import click
 
 from doc import Document
 from index import Indexer
 
 
-@click.group(invoke_without_command=True)
+@shell(prompt='wpp> ')
 def main():
     docs = read_file_into_docs("doc_dump.txt")
     create_id_file_from_docs("ID.txt", docs)
@@ -19,12 +20,13 @@ def read_file_into_docs(file):
     docs = list()
 
     with open(file, mode="r", encoding="utf-8") as f:
-        for l in f.readlines():
-            data = l.split("\t")
-            if len(data) == 4:
-                docs.append(Document(data[0], data[1], data[2], data[3]))
-            else:
-                print("NoNoNo")
+        with click.progressbar(f.readlines(), label="Reading file") as bar:
+            for l in bar:
+                data = l.split("\t")
+                if len(data) == 4:
+                    docs.append(Document(data[0], data[1], data[2], data[3]))
+                else:
+                    print("NoNoNo")
     return docs
 
 
