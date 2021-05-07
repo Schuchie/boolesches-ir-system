@@ -1,4 +1,4 @@
-from index import PostingList
+from .posting import PostingList
 
 
 class Dictionary:
