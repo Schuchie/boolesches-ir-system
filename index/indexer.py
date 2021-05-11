@@ -15,10 +15,10 @@ class Indexer:
         for doc in self.docs:
             position = 0
             for term in doc.get_title():
-                self.add_term(term, doc.get_id(), position)
+                self.add_term(term.txt, doc.get_id(), position)
                 position += 1
             for term in doc.get_text():
-                self.add_term(term, doc.get_id(), position)
+                self.add_term(term.txt, doc.get_id(), position)
                 position += 1
 
         print(self.dictionaries)
