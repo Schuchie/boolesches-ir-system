@@ -1,8 +1,12 @@
+from tokenizer import Tok
+from tokenizer import TOK
+
 from doc import Document
 from .dictionary import Dictionary
 
 
 class Indexer:
+    ALLOWED_TOK_TYPES = [TOK.WORD, TOK.NUMBER, TOK.YEAR, TOK.DATE]
     docs = None  # type: [Document]
     dictionaries = None
 
@@ -15,18 +19,20 @@ class Indexer:
         for doc in self.docs:
             position = 0
             for term in doc.get_title():
-                self.add_term(term.txt, doc.get_id(), position)
-                position += 1
+                if self.add_term(term, doc.get_id(), position):
+                    position += 1
             for term in doc.get_text():
-                self.add_term(term.txt, doc.get_id(), position)
-                position += 1
+                if self.add_term(term, doc.get_id(), position):
+                    position += 1
 
-        print(self.dictionaries)
+    def add_term(self, token: Tok, doc_id: str, position: int) -> bool:
 
-    def add_term(self, term: str, doc_id: str, position: int):
-        dic = self.get_or_create_dictionary(term)
+        if len(token.txt) != 0 and token.kind in self.ALLOWED_TOK_TYPES:
+            dic = self.get_or_create_dictionary(token.txt)
+            dic.add_posting_list(doc_id, position)
+            return True
 
-        dic.add_posting_list(doc_id, position)
+        return False
 
     def get_or_create_dictionary(self, term: str):
 
