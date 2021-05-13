@@ -24,3 +24,14 @@ def levenshtein_distance(s, t):
             )
 
     return matrix[m][n]
+
+
+def k_split(term, k):
+    long_term = f'${term}$'
+    l = len(long_term) - (k - 1)
+    result = set()
+
+    for i in range(l):
+        result.add(long_term[i:i+k])
+
+    return list(result)
