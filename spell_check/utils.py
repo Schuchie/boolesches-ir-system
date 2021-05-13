@@ -35,3 +35,14 @@ def k_split(term, k):
         result.add(long_term[i:i+k])
 
     return list(result)
+
+
+"""
+q: Ich bin
+ -k=2-> $I Ic ch h$ $b bi in n$
+t: Ich war ein Mensch
+ -k=2-> $I Ic ch h$ $w wa ar r$ $e ei in n$ $M Me en ns sc -ch- h$
+
+
+
+"""
