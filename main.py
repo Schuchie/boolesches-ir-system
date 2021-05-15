@@ -1,6 +1,6 @@
+from query.bool_junctures import BoolJunctores
 import tokenize
 import itertools
-from tokenizer import TOK
 from io import BytesIO
 from click_shell import shell
 import click
@@ -11,10 +11,16 @@ from index import Indexer
 
 @shell(prompt='wpp> ')
 def main():
-    docs = read_file_into_docs("doc_dump.txt")
-    create_id_file_from_docs("ID.txt", docs)
+    docs = read_id_file_into_docs("ID.txt")
+    # docs = read_file_into_docs("doc_dump.txt")
+    # create_id_file_from_docs("ID.txt", docs)
+
     indexer = Indexer(docs)
     indexer.create()
+
+    junctor = BoolJunctores(indexer)
+    foundIndexes = junctor.parse("associated AND allergic OR deprivation")
+    print(foundIndexes)
 
 
 def read_file_into_docs(file):
@@ -26,6 +32,20 @@ def read_file_into_docs(file):
                 data = l.split("\t")
                 if len(data) == 4:
                     docs.append(Document(data[0], data[1], data[2], data[3]))
+                else:
+                    print("NoNoNo")
+    return docs
+
+
+def read_id_file_into_docs(file):
+    docs = list()
+
+    with open(file, mode="r", encoding="utf-8") as f:
+        with click.progressbar(f.readlines(), label="Reading file") as bar:
+            for l in bar:
+                data = l.split("\t")
+                if len(data) == 2:
+                    docs.append(Document(data[0], "", data[1], ""))
                 else:
                     print("NoNoNo")
     return docs

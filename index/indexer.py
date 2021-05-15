@@ -21,9 +21,9 @@ class Indexer:
             for term in doc.get_title():
                 if self.add_term(term, doc.get_id(), position):
                     position += 1
-            for term in doc.get_text():
-                if self.add_term(term, doc.get_id(), position):
-                    position += 1
+            # for term in doc.get_text():
+            #     if self.add_term(term, doc.get_id(), position):
+            #         position += 1
 
     def add_term(self, token: Tok, doc_id: str, position: int) -> bool:
 
