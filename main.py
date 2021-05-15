@@ -1,5 +1,6 @@
 import tokenize
 import itertools
+from tokenizer import TOK
 from io import BytesIO
 from click_shell import shell
 import click
@@ -11,7 +12,7 @@ from index import Indexer
 @shell(prompt='wpp> ')
 def main():
     docs = read_file_into_docs("doc_dump.txt")
-    #create_id_file_from_docs("ID.txt", docs)
+    create_id_file_from_docs("ID.txt", docs)
     indexer = Indexer(docs)
     indexer.create()
 
@@ -30,12 +31,13 @@ def read_file_into_docs(file):
     return docs
 
 
-def create_id_file_from_docs(file, docs: [Document]):
+def create_id_file_from_docs(file, docs: "list[Document]"):
+
     with open(file, mode="w", encoding="utf-8") as f:
         for doc in docs:
             f.write(doc.get_id())
             f.write("\t")
-            f.write(doc.get_title()[0].txt)
+            f.write(doc._title)
             f.write("\n")
         f.close()
 
