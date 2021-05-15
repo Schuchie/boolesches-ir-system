@@ -3,7 +3,7 @@ from index.dictionary import Dictionary
 from index.indexer import Indexer
 
 
-class BoolJunctores:
+class BoolJuncture:
 
     indexer = None
 
@@ -17,31 +17,28 @@ class BoolJunctores:
             terms = andConnection.strip().split("AND")
             andPostingList = {}
             for term in terms:
-                dict = self.findWord(term.strip())
-                if andPostingList == {}:
-                    andPostingList = dict.posting_lists
-                    continue
+                dict = self.indexer.get_dictionary(term.strip())
+                if dict is None:
+                    andPostingList = self.merge_and(andPostingList, {})
+                else:
+                    if andPostingList == {}:
+                        andPostingList = dict.posting_lists
+                        continue
 
-                andPostingList = self.mergeAND(
-                    andPostingList, dict.posting_lists)
-            orPostingList = self.mergeOR(orPostingList, andPostingList)
-        return orPostingList
+                    andPostingList = self.merge_and(
+                        andPostingList, dict.posting_lists)
+            orPostingList = self.merge_or(orPostingList, andPostingList)
+        return orPostingList.keys()
 
-    def findWord(self, word: str) -> Dictionary:
-        if word in self.indexer.dictionaries:
-            return self.indexer.dictionaries[word]
-        else:
-            return None
-
-    def mergeAND(self, postingOne, postingTwo):
+    def merge_and(self, postingOne, postingTwo):
         newPostingList = {}
         for termOne in postingOne:
             for termTwo in postingTwo:
                 if termOne == termTwo:
-                    newPostingList[termOne] = PostingList(0)
+                    newPostingList[termOne] = postingOne[termOne]
         return newPostingList
 
-    def mergeOR(self, postingOne, postingTwo):
+    def merge_or(self, postingOne, postingTwo):
         newPostingList = postingOne.copy()
         for termTwo in postingTwo:
             if termTwo not in newPostingList:

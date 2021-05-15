@@ -1,4 +1,5 @@
-from query.bool_junctures import BoolJunctores
+from query.phrase_query import PhraseQuery
+from query.bool_juncture import BoolJuncture
 import tokenize
 import itertools
 from io import BytesIO
@@ -18,8 +19,14 @@ def main():
     indexer = Indexer(docs)
     indexer.create()
 
-    junctor = BoolJunctores(indexer)
-    foundIndexes = junctor.parse("associated AND allergic OR deprivation")
+    # TODO: Add NOT operation
+    # bool = BoolJuncture(indexer)
+    # foundIndexes = bool.parse(
+    #     "associated AND allergic AND low OR deprivation")
+    # print(foundIndexes)
+
+    phrase = PhraseQuery(indexer)
+    foundIndexes = phrase.parse("vegetable intake")
     print(foundIndexes)
 
 

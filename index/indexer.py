@@ -10,7 +10,7 @@ class Indexer:
     docs = None  # type: [Document]
     dictionaries = None
 
-    def __init__(self, docs: [Document]):
+    def __init__(self, docs: "list[Document]"):
         self.docs = docs
         self.dictionaries = {}
 
@@ -34,8 +34,14 @@ class Indexer:
 
         return False
 
-    def get_or_create_dictionary(self, term: str):
+    def get_or_create_dictionary(self, term: str) -> Dictionary:
 
-        if term not in self.dictionaries:
+        if self.get_dictionary(term) is None:
             self.dictionaries[term] = Dictionary(term)
-        return self.dictionaries[term]
+        return self.get_dictionary(term)
+
+    def get_dictionary(self, term: str) -> Dictionary:
+
+        if term in self.dictionaries:
+            return self.dictionaries[term]
+        return None
