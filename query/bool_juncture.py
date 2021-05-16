@@ -1,6 +1,7 @@
 from index.posting_list import PostingList
-from index.dictionary import Dictionary
 from index.indexer import Indexer
+import re
+import ast
 
 
 class BoolJuncture:
@@ -11,24 +12,28 @@ class BoolJuncture:
         self.indexer = indexer
 
     def parse(self, query: str):
-        andConnections = query.split("OR")
-        orPostingList = {}
-        for andConnection in andConnections:
-            terms = andConnection.strip().split("AND")
-            andPostingList = {}
+        orTerms = query.split("AND")
+        andPostingList = {}
+        for ors in orTerms:
+            terms = ors.strip().split("OR")
+            orPostingList = {}
             for term in terms:
-                dict = self.indexer.get_dictionary(term.strip())
-                if dict is None:
-                    andPostingList = self.merge_and(andPostingList, {})
-                else:
-                    if andPostingList == {}:
-                        andPostingList = dict.posting_lists
-                        continue
+                postingList = self.get_posting_list_from_term(term)
+                orPostingList = self.merge_or(orPostingList, postingList)
 
-                    andPostingList = self.merge_and(
-                        andPostingList, dict.posting_lists)
-            orPostingList = self.merge_or(orPostingList, andPostingList)
-        return orPostingList.keys()
+            andPostingList = self.merge_and(andPostingList, orPostingList)
+        return list(orPostingList.keys())
+
+    def get_posting_list_from_term(self, term):
+        # parse previous query results
+        if re.match(r"\[.*\]", term.strip(), re.M | re.I):
+            l = ast.literal_eval(term.strip())
+            return self.list_to_dict(l)
+        # regular bool term
+        dict = self.indexer.get_dictionary(term.strip())
+        if dict is None:
+            return {}
+        return dict.posting_lists
 
     def merge_and(self, postingOne, postingTwo):
         newPostingList = {}
@@ -44,3 +49,9 @@ class BoolJuncture:
             if termTwo not in newPostingList:
                 newPostingList[termTwo] = PostingList(0)
         return newPostingList
+
+    def list_to_dict(self, list):
+        out = {}
+        for l in list:
+            out[l] = PostingList(0)
+        return out

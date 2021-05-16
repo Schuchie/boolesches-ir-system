@@ -1,8 +1,4 @@
-from query.phrase_query import PhraseQuery
-from query.bool_juncture import BoolJuncture
-import tokenize
-import itertools
-from io import BytesIO
+from query.query import Query
 from click_shell import shell
 import click
 
@@ -12,22 +8,7 @@ from index import Indexer
 
 @shell(prompt='wpp> ')
 def main():
-    docs = read_id_file_into_docs("ID.txt")
-    # docs = read_file_into_docs("doc_dump.txt")
-    # create_id_file_from_docs("ID.txt", docs)
-
-    indexer = Indexer(docs)
-    indexer.create()
-
-    # TODO: Add NOT operation
-    # bool = BoolJuncture(indexer)
-    # foundIndexes = bool.parse(
-    #     "associated AND allergic AND low OR deprivation")
-    # print(foundIndexes)
-
-    phrase = PhraseQuery(indexer)
-    foundIndexes = phrase.parse("vegetable intake")
-    print(foundIndexes)
+    pass
 
 
 def read_file_into_docs(file):
@@ -70,9 +51,18 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
 
 
 @main.command()
-@click.argument('query', nargs=-1, type=click.UNPROCESSED)
-def search(query):
-    click.echo(f"Suchanfrage: {query}")
+@click.argument('query_string', type=click.STRING)
+def search(query_string):
+    docs = read_id_file_into_docs("ID.txt")
+    # docs = read_file_into_docs("doc_dump.txt")
+    # create_id_file_from_docs("ID.txt", docs)
+    indexer = Indexer(docs)
+    indexer.create()
+
+    # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
+    query = Query(indexer)
+    out = query.parse(query_string)
+    click.echo(f"Suchanfrage: {out}")
 
 
 if __name__ == '__main__':
