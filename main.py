@@ -4,11 +4,21 @@ import click
 
 from doc import Document
 from index import Indexer
+from spell_check import SpellChecker
+
+
+indexer = None
 
 
 @shell(prompt='wpp> ')
 def main():
-    pass
+    global indexer
+
+    docs = read_id_file_into_docs("ID.txt")
+    # docs = read_file_into_docs("doc_dump.txt")
+    # create_id_file_from_docs("ID.txt", docs)
+    indexer = Indexer(docs)
+    indexer.create()
 
 
 def read_file_into_docs(file):
@@ -53,11 +63,7 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
 @main.command()
 @click.argument('query_string', type=click.STRING)
 def search(query_string):
-    docs = read_id_file_into_docs("ID.txt")
-    # docs = read_file_into_docs("doc_dump.txt")
-    # create_id_file_from_docs("ID.txt", docs)
-    indexer = Indexer(docs)
-    indexer.create()
+    spell_checker = SpellChecker(indexer)
 
     # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
     query = Query(indexer)
