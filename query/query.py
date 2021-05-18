@@ -33,6 +33,8 @@ class Query:
         res = query
         q = re.findall(r"(\w*\d*)\s(\/\d)\s(\w*\d*)", query, re.M | re.I)
 
+        misspelled = []
+
         if q:
             for p in q:
                 rawQuery = p[0] + " " + p[1] + " " + p[2]
@@ -43,6 +45,8 @@ class Query:
     def process_phrase(self, query: str, r: int):
         res = query
         q = re.findall(r"\".*\"", query, re.M | re.I)
+
+        misspelled = []
 
         if q:
             for p in q:
