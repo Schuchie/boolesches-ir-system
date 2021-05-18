@@ -12,24 +12,26 @@ class BoolJuncture:
     def __init__(self, indexer: Indexer):
         self.indexer = indexer
 
-    def parse(self, query: str):
+    def parse(self, query: str, r=3):
         orTerms = query.split("AND")
         andPostingList = {}
+        possibleMisspelled = []
         for ors in orTerms:
             terms = ors.strip().split("OR")
             orPostingList = {}
             for term in terms:
-                postingList = self.get_posting_list_from_term(term)
+                postingList, pm = self.get_index_list_from_term(term, r)
+                possibleMisspelled += pm
                 orPostingList = self.merge_or(orPostingList, postingList)
 
             andPostingList = self.merge_and(andPostingList, orPostingList)
-        return list(orPostingList.keys())
+        return list(orPostingList.keys()), possibleMisspelled
 
-    def get_posting_list_from_term(self, term: str):
+    def get_index_list_from_term(self, term: str, r: int):
         # parse previous query results
         if re.match(r"\[.*\]", term.strip(), re.M | re.I):
             l = ast.literal_eval(term.strip())
-            return self.list_to_dict(l)
+            return self.list_to_dict(l), []
         # regular bool term
         if term.startswith("NOT"):
             res = {}
@@ -38,12 +40,15 @@ class BoolJuncture:
             for doc in self.indexer.docs:
                 if not self.doc_has_term(doc, strTerm):
                     res[doc.get_id()] = PostingList(0)
-            return res
+            return res, []
 
         dict = self.indexer.get_dictionary(term.strip())
         if dict is None:
-            return {}
-        return dict.posting_lists
+            return {}, [term.strip()]
+
+        if dict.frequency <= r:
+            return dict.posting_lists, [term.strip()]
+        return dict.posting_lists, []
 
     def merge_and(self, postingOne, postingTwo):
         newPostingList = {}

@@ -70,8 +70,8 @@ def search(query_string):
 
     # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
     query = Query(indexer)
-    out = query.parse(query_string)
-    click.echo(f"Suchanfrage: {out}")
+    out, ms = query.parse(query_string)
+    click.echo(f"Suchanfrage: {out} Fehler: {ms}")
 
 
 if __name__ == '__main__':
