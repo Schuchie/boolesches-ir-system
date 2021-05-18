@@ -8,17 +8,24 @@ from spell_check import SpellChecker
 
 
 indexer = None
+spell_checker = NotImplemented
 
 
 @shell(prompt='wpp> ')
 def main():
-    global indexer
+    global indexer, spell_checker
 
     docs = read_id_file_into_docs("ID.txt")
     # docs = read_file_into_docs("doc_dump.txt")
     # create_id_file_from_docs("ID.txt", docs)
     indexer = Indexer(docs)
     indexer.create()
+
+    # 1. Parameter: Indexer
+    # 2. Parameter: Jaccard threshold
+    # 3. Parameter: k-Gram k
+    # 4. Parameter: Limit corrected words
+    spell_checker = SpellChecker(indexer, 0.7, 2, 3)
 
 
 def read_file_into_docs(file):
@@ -63,11 +70,6 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
 @main.command()
 @click.argument('query_string', type=click.STRING)
 def search(query_string):
-    # 1. Parameter: Indexer
-    # 2. Parameter: Jaccard threshold
-    # 3. Parameter: k-Gram k
-    spell_checker = SpellChecker(indexer, 0.9, 2)
-
     # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
     query = Query(indexer)
     # 1. Parameter: Query
@@ -76,9 +78,15 @@ def search(query_string):
 
     if len(ms) > 0:
         for m in ms:
-            print(f"Possible wrong: {m} Found terms: {spell_checker.check(m)}")
+            possible_terms = spell_checker.check(m)
 
-    click.echo(f"Suchanfrage: {out} Fehler: {ms}")
+            if len(possible_terms) > 0:
+                print(
+                    f"{m} is possible wrong. Do you mean: {spell_checker.check(m)}")
+            else:
+                print(f"{m} is possible wrong.")
+
+    click.echo(f"Suchanfrage: {out}\n")
 
 
 if __name__ == '__main__':
