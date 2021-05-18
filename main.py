@@ -66,11 +66,18 @@ def search(query_string):
     # 1. Parameter: Indexer
     # 2. Parameter: Jaccard threshold
     # 3. Parameter: k-Gram k
-    spell_checker = SpellChecker(indexer, 0.5, 2)
+    spell_checker = SpellChecker(indexer, 0.9, 2)
 
     # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
     query = Query(indexer)
-    out, ms = query.parse(query_string)
+    # 1. Parameter: Query
+    # 2. Parameter: r threshold for found documents
+    out, ms = query.parse(query_string, 1)
+
+    if len(ms) > 0:
+        for m in ms:
+            print(f"Possible wrong: {m} Found terms: {spell_checker.check(m)}")
+
     click.echo(f"Suchanfrage: {out} Fehler: {ms}")
 
 
