@@ -17,7 +17,7 @@ class BoolJuncture:
         andPostingList = {}
         possibleMisspelled = []
         for ors in orTerms:
-            terms = ors.strip().split("OR")
+            terms = ors.strip().replace("(", "").replace(")", "").split("OR")
             orPostingList = {}
             for term in terms:
                 postingList, pm = self.get_index_list_from_term(term, r)
