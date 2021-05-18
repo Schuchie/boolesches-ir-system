@@ -19,3 +19,7 @@ python main.py
 ```sh
 search <Query>
 ```
+
+## Info
+
+To use Proximity Queries use a forward slash '/' and not '\\' because the "click" package parses it wrong
