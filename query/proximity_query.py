@@ -9,7 +9,7 @@ class ProximityQuery:
         self.indexer = indexer
 
     def parse(self, query: str, r=3):
-        q = re.match("(.*) (\/\d) (.*)", query, re.M | re.I)
+        q = re.match(r"(.+) (\/\d+) (.+)", query, re.M | re.I)
 
         if q:
             wordOne = q.group(1)

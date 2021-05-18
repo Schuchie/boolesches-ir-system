@@ -6,9 +6,9 @@ class Document:
         self.id = id.lower()
         self.url = url.lower()
         self._title = title
-        self.title = tokenizer.tokenize(title.lower())
+        self.title = list(tokenizer.tokenize(title.lower()))
         self._text = text
-        self.text = tokenizer.tokenize(text.lower())
+        self.text = list(tokenizer.tokenize(text.lower()))
 
     def get_id(self):
         return self.id
@@ -21,3 +21,6 @@ class Document:
 
     def get_text(self):
         return self.text
+
+    def get_title2(self):
+        return self.__title

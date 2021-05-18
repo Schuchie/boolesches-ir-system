@@ -24,8 +24,11 @@ class BoolJuncture:
                 possibleMisspelled += pm
                 orPostingList = self.merge_or(orPostingList, postingList)
 
-            andPostingList = self.merge_and(andPostingList, orPostingList)
-        return list(orPostingList.keys()), possibleMisspelled
+            if andPostingList == {}:
+                andPostingList = orPostingList
+            else:
+                andPostingList = self.merge_and(andPostingList, orPostingList)
+        return list(andPostingList.keys()), possibleMisspelled
 
     def get_index_list_from_term(self, term: str, r: int):
         # parse previous query results
@@ -72,7 +75,7 @@ class BoolJuncture:
         return out
 
     def doc_has_term(self, doc: Document, term: str):
-        for t in doc.get_text():
-            if t == term:
+        for t in doc.get_title():
+            if t.txt == term:
                 return True
         return False
