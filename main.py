@@ -63,7 +63,10 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
 @main.command()
 @click.argument('query_string', type=click.STRING)
 def search(query_string):
-    spell_checker = SpellChecker(indexer)
+    # 1. Parameter: Indexer
+    # 2. Parameter: Jaccard threshold
+    # 3. Parameter: k-Gram k
+    spell_checker = SpellChecker(indexer, 0.5, 2)
 
     # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
     query = Query(indexer)

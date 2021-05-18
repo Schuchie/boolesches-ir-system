@@ -4,11 +4,12 @@ from .utils import jaccard
 
 
 class SpellChecker:
-    j = 0.5
+    j = None
     k_gram_indexer = None
 
-    def __init__(self, indexer: Indexer):
-        self.k_gram_indexer = KGramIndexer(indexer)
+    def __init__(self, indexer: Indexer, j=0.5, k=2):
+        self.j = j
+        self.k_gram_indexer = KGramIndexer(indexer, k)
         self.k_gram_indexer.parse()
 
     def check(self, term):
