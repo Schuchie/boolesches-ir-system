@@ -1,5 +1,4 @@
 from index.indexer import Indexer
-
 from .utils import k_split
 
 
@@ -21,3 +20,11 @@ class KGramIndexer:
                     self.k_grams[split] = []
 
                 self.k_grams[split].append(dictionaries[term])
+
+    def get_dictionaries_for_term(self, term):
+        dictionaries = []
+
+        for split in k_split(term, self.k):
+            dictionaries += self.k_grams.get(split, [])
+
+        return dictionaries

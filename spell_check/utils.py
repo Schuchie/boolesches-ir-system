@@ -37,6 +37,13 @@ def k_split(term, k):
     return list(result)
 
 
+def jaccard(term1, term2):
+    str1 = set(term1)
+    str2 = set(term2)
+
+    return float(len(str1 & str2)) / len(str1 | str2)
+
+
 """
 q: Ich bin
  -k=2-> $I Ic ch h$ $b bi in n$
