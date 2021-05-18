@@ -42,14 +42,3 @@ def jaccard(term1, term2):
     str2 = set(term2)
 
     return float(len(str1 & str2)) / len(str1 | str2)
-
-
-"""
-q: Ich bin
- -k=2-> $I Ic ch h$ $b bi in n$
-t: Ich war ein Mensch
- -k=2-> $I Ic ch h$ $w wa ar r$ $e ei in n$ $M Me en ns sc -ch- h$
-
-
-
-"""
