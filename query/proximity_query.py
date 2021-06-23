@@ -46,7 +46,7 @@ class ProximityQuery:
                     postingListTwo = dictTwo.posting_lists[idOne]
                     for posOne in postingListOne.get_positions():
                         for posTwo in postingListTwo.get_positions():
-                            if posTwo - posOne <= maxOffset:
+                            if posTwo - posOne <= (maxOffset + 1):
                                 foundIndexes.append(idOne)
 
         return foundIndexes, possibleMisspelled

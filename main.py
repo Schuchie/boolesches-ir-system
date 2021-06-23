@@ -70,7 +70,9 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
 @main.command()
 @click.argument('query_string', type=click.STRING)
 def search(query_string):
-    # example: \"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low AND deprivation OR bitterness
+    # example: "(blood OR pressure) AND cardiovascular"
+    # example: "brown /2 development"
+    # example: "(\"vegetable intake\" OR vegetable /2 intake OR vegetable /1 intake OR low) AND (deprivation OR bitterness)"
     query = Query(indexer)
     # 1. Parameter: Query
     # 2. Parameter: r threshold for found documents

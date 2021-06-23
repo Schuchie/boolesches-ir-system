@@ -1,5 +1,4 @@
-from tokenizer import Tok
-from tokenizer import TOK
+from tokenizer import Tok, TOK
 
 from doc import Document
 from .dictionary import Dictionary
