@@ -1,3 +1,4 @@
+from query.tf_idf import TdIdf
 from query.query import Query
 from click_shell import shell
 import click
@@ -51,6 +52,8 @@ def read_id_file_into_docs(file):
                 data = l.split("\t")
                 if len(data) == 2:
                     docs.append(Document(data[0], "", data[1], ""))
+                elif len(data) == 3:
+                    docs.append(Document(data[0], "", data[1], data[2]))
                 else:
                     print("NoNoNo")
     return docs
@@ -63,7 +66,8 @@ def create_id_file_from_docs(file, docs: "list[Document]"):
             f.write(doc.get_id())
             f.write("\t")
             f.write(doc._title)
-            f.write("\n")
+            f.write("\t")
+            f.write(doc._text)
         f.close()
 
 
@@ -89,6 +93,37 @@ def search(query_string):
                 print(f"{m} is possible wrong.")
 
     click.echo(f"Suchanfrage: {out}\n")
+
+
+@main.command()
+@click.argument('term', type=click.STRING)
+def check(term):
+    global indexer
+
+    if term in indexer.dictionaries:
+        dic = indexer.dictionaries[term]
+        click.echo(
+            f"Term {term} has the idf score {dic.get_inverse_document_frequency()} and a total frequency of {dic.get_document_frequency()}")
+    else:
+        click.echo(f"Term {term} not found.")
+
+
+@main.command()
+@click.argument('term', type=click.STRING)
+def score(term):
+    global indexer
+
+    tdidf = TdIdf(indexer)
+    scores = tdidf.parse(term)
+
+    rank = 1
+
+    for (doc_id, score) in scores:
+        if score <= 0:
+            continue
+
+        print(f"#{rank} {doc_id} with a score of: {score}")
+        rank += 1
 
 
 if __name__ == '__main__':
