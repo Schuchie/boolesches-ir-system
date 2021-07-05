@@ -211,6 +211,41 @@ def test(index):
     test_output(index, word2vec_res, ground_truth, 50)
 
 
+@main.command()
+@click.argument('index', type=click.STRING)
+def map(index):
+    global queries, q_rel, indexer
+
+    m = Metrics()
+
+    test_query_indexes = ["plain-121", "plain-1021",
+                          "plain-15", "plain-145", "1336"]
+    test_queries = []
+
+    td_idf_score = 0
+    word_2_vec_score = 0
+
+    for query in queries:
+        if query.get_id() in test_query_indexes:
+            test_queries.append((query.get_id(), query._title))
+
+    for (index, q) in test_queries:
+        ground_truth = q_rel[index.upper()]
+        ground_truth_len = len(ground_truth)
+        tdidf = TdIdf(indexer)
+        tdidf_res = tdidf.parse(q)
+        word2vec = Word2Vec(indexer)
+        word2vec_res = word2vec.parse(q)
+
+        td_idf_score += m.compute_p_score(
+            tdidf_res[:ground_truth_len], ground_truth)
+        word_2_vec_score += m.compute_p_score(
+            word2vec_res[:ground_truth_len], ground_truth)
+
+    print(
+        f"MAP-Score of five test queries. td-idf: {td_idf_score / len(test_query_indexes)} word2vec: {word_2_vec_score / len(test_query_indexes)}")
+
+
 def test_output(index, res, ground_truth, top_n=50):
     m = Metrics()
 
