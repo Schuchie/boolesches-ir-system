@@ -1,3 +1,4 @@
+from Metrics import Metrics
 from query.word2vec import Word2Vec
 from query.tf_idf import TdIdf
 from query.query import Query
@@ -10,14 +11,18 @@ from spell_check import SpellChecker
 
 
 indexer = None
+queries = None
+q_rel = None
 spell_checker = NotImplemented
 
 
 @shell(prompt='wpp> ')
 def main():
-    global indexer, spell_checker
+    global indexer, queries, q_rel, spell_checker
 
-    docs = read_id_file_into_docs("ID.txt")
+    docs = read_id_file_into_docs("docs.txt")
+    queries = read_id_file_into_docs("queries.txt")
+    q_rel = read_qrel_file("qrel.txt")
     # docs = read_file_into_docs("doc_dump.txt")
     # create_id_file_from_docs("ID.txt", docs)
     indexer = Indexer(docs)
@@ -58,6 +63,23 @@ def read_id_file_into_docs(file):
                 else:
                     print("NoNoNo")
     return docs
+
+
+def read_qrel_file(file):
+    with open(file, 'r', encoding="utf8") as f:
+        with click.progressbar(f.readlines(), label="Reading qrel") as bar:
+            qrel_lines = bar
+
+    res = {}
+
+    for l in qrel_lines:
+        splitted = l.split('\t')
+        if not splitted[0] in res.keys():
+            res[splitted[0]] = [splitted[2]]
+        else:
+            res[splitted[0]].append(splitted[2])
+
+    return res
 
 
 def create_id_file_from_docs(file, docs: "list[Document]"):
@@ -142,6 +164,62 @@ def word2vec(term):
             break
         print(f"#{rank} {doc_id} with a score of: {score}")
         rank += 1
+
+
+@main.command()
+@click.argument('index', type=click.STRING)
+def test(index):
+    global queries, q_rel, indexer
+
+    raw_query = ""
+
+    for query in queries:
+        if query.get_id() == index.lower():
+            raw_query = query._title
+
+    ground_truth = q_rel[index]
+    ground_truth_len = len(ground_truth)
+
+    tdidf = TdIdf(indexer)
+    tdidf_res = tdidf.parse(raw_query)
+    word2vec = Word2Vec(indexer)
+    word2vec_res = word2vec.parse(raw_query)
+
+    m = Metrics()
+    r_precision = m.compute_r_score(tdidf_res[:ground_truth_len], ground_truth)
+    w2v_r_precision = m.compute_r_score(
+        word2vec_res[:ground_truth_len], ground_truth)
+
+    print(f"td-idf (Top 5, r-precision={r_precision}):")
+    test_output(index, tdidf_res, ground_truth, 5)
+    print(f"word2vec (Top 5, r-precision={w2v_r_precision}):")
+    test_output(index, word2vec_res, ground_truth, 5)
+
+    print(f"td-idf (Top 10, r-precision={r_precision}):")
+    test_output(index, tdidf_res, ground_truth, 10)
+    print(f"word2vec (Top 10, r-precision={w2v_r_precision}):")
+    test_output(index, word2vec_res, ground_truth, 10)
+
+    print(f"td-idf (Top 20, r-precision={r_precision}):")
+    test_output(index, tdidf_res, ground_truth, 20)
+    print(f"word2vec (Top 20, r-precision={w2v_r_precision}):")
+    test_output(index, word2vec_res, ground_truth, 20)
+
+    print(f"td-idf (Top 50, r-precision={r_precision}):")
+    test_output(index, tdidf_res, ground_truth, 50)
+    print(f"word2vec (Top 50, r-precision={w2v_r_precision}):")
+    test_output(index, word2vec_res, ground_truth, 50)
+
+
+def test_output(index, res, ground_truth, top_n=50):
+    m = Metrics()
+
+    precision_score = m.compute_p_score(res[:top_n], ground_truth)
+    recall_score = m.compute_r_score(res[:top_n], ground_truth)
+    f1_score = m.compute_f1_score(res[:top_n], ground_truth)
+
+    print(
+        f"scores for test-query {index} are p: {precision_score}, r: {recall_score}, f1: {f1_score}")
 
 
 if __name__ == '__main__':

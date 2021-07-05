@@ -25,6 +25,7 @@ class Word2Vec:
             vec_a = self.document_indexer.doc_vec_avg[doc]
             if len(vec_a) != len(query_vec):
                 continue
+
             cos_sim = dot(vec_a, query_vec) / (norm(vec_a) * norm(query_vec))
             result.append((doc, cos_sim))
 
