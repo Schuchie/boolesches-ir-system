@@ -4,8 +4,8 @@ from .posting_list import PostingList
 
 
 class Dictionary:
-    term = None  # type: str
-    frequency = 0  # type: int
+    term: str = None
+    frequency: int = 0
     posting_lists: Dict[str, PostingList] = None
     total_documents = 0
 

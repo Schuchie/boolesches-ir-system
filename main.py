@@ -1,3 +1,4 @@
+from query.word2vec import Word2Vec
 from query.tf_idf import TdIdf
 from query.query import Query
 from click_shell import shell
@@ -122,6 +123,23 @@ def score(term):
         if score <= 0:
             continue
 
+        print(f"#{rank} {doc_id} with a score of: {score}")
+        rank += 1
+
+
+@main.command()
+@click.argument('term', type=click.STRING)
+def word2vec(term):
+    global indexer
+
+    word2vec = Word2Vec(indexer)
+    scores = word2vec.parse(term)
+
+    rank = 1
+
+    for (doc_id, score) in scores:
+        if rank > 100:
+            break
         print(f"#{rank} {doc_id} with a score of: {score}")
         rank += 1
 
