@@ -75,6 +75,6 @@ To use Proximity Queries use a forward slash '/' and not '\\' because the "click
 
 ### MAP-Score
 
-**td-idf**: 0.1491761345998634
+**td-idf**: 0.17417613459986342
 
 **word2vec**: 0.11169926119078662

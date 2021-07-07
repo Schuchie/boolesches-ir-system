@@ -220,7 +220,7 @@ def map(index):
     m = Metrics()
 
     test_query_indexes = ["plain-121", "plain-1021",
-                          "plain-15", "plain-145", "1336"]
+                          "plain-15", "plain-145", "plain-1336"]
     test_queries = []
 
     td_idf_score = 0
