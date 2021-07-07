@@ -32,6 +32,10 @@ To use Proximity Queries use a forward slash '/' and not '\\' because the "click
 
 - Search `search '(blood OR presure) AND cardiovascular'` (with spell check): 0.011s
 
+## New Benchmarks
+
+- Setup (Load word2vec, index, load vectors): 1min 43sec
+
 ## Evaluation
 
 ### PLAIN-121

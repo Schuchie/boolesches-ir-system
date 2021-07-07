@@ -186,8 +186,9 @@ def test(index):
     word2vec_res = word2vec.parse(raw_query)
 
     m = Metrics()
-    r_precision = m.compute_r_score(tdidf_res[:ground_truth_len], ground_truth)
-    w2v_r_precision = m.compute_r_score(
+    r_precision = m.compute_recall_score(
+        tdidf_res[:ground_truth_len], ground_truth)
+    w2v_r_precision = m.compute_recall_score(
         word2vec_res[:ground_truth_len], ground_truth)
 
     print(f"td-idf (Top 5, r-precision={r_precision}):")
@@ -237,9 +238,9 @@ def map(index):
         word2vec = Word2Vec(indexer)
         word2vec_res = word2vec.parse(q)
 
-        td_idf_score += m.compute_p_score(
+        td_idf_score += m.compute_precision_score(
             tdidf_res[:ground_truth_len], ground_truth)
-        word_2_vec_score += m.compute_p_score(
+        word_2_vec_score += m.compute_precision_score(
             word2vec_res[:ground_truth_len], ground_truth)
 
     print(
@@ -249,8 +250,8 @@ def map(index):
 def test_output(index, res, ground_truth, top_n=50):
     m = Metrics()
 
-    precision_score = m.compute_p_score(res[:top_n], ground_truth)
-    recall_score = m.compute_r_score(res[:top_n], ground_truth)
+    precision_score = m.compute_precision_score(res[:top_n], ground_truth)
+    recall_score = m.compute_recall_score(res[:top_n], ground_truth)
     f1_score = m.compute_f1_score(res[:top_n], ground_truth)
 
     print(
